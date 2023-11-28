@@ -217,7 +217,7 @@ func extractWavChunk(inputFilePath string, durationMillisec int) ([]AudioMessage
 	if decoder == nil {
 		return nil, nil
 	}
-	segmentSamples := ((int(decoder.SampleRate) * durationMillisec) / 1000)
+	segmentSamples := 5328
 	// Calculate the number of samples for the desired duration
 	// Read audio data
 	buf, err := decoder.FullPCMBuffer()
