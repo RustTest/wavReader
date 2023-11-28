@@ -191,7 +191,7 @@ type AudioChannel struct {
 	data       []AudioData `json:"data"`
 }
 
-func wavReaderVoxflo(audioFile string, durationMillisec int) []AudioMessage {
+func (p *PubSub) wavReaderVoxflo(audioFile string, durationMillisec int) []AudioMessage {
 
 	// Replace 'yourfile.wav' with the actual path to your WAV file
 	filePath := audioFile
