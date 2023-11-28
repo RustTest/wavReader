@@ -190,7 +190,7 @@ type AudioMessage struct {
 }
 
 
-func (p *PubSub)  wavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
+func (p *PubSub)  WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
 	// Open the input WAV file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
