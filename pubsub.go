@@ -34,7 +34,7 @@ type PublisherStats struct {
 type PubSub struct{}
 
 func init() {
-	modules.Register("k6/x/wavereader", new(PubSub))
+	modules.Register("k6/x/wavreader", new(PubSub))
 }
 
 type PulsarClientConfig struct {
