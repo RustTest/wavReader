@@ -210,7 +210,7 @@ func (p *PubSub)  wavReaderVoxflo(inputFilePath string, durationMillisec int) []
 	// Read audio data
 	buf, err := decoder.FullPCMBuffer()
 	if err != nil {
-		log.Fatal("error in pcm buf)
+		log.Fatal("error in pcm buf")
 			  return nil
 	}
 
