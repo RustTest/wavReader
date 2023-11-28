@@ -179,30 +179,16 @@ type AudioData struct {
 	pcm_bytes   []int16 `json:"pcm_bytes"`
 	sample_rate uint32  `json:"sample_rate"`
 }
-
+type AudioChannel struct {
+	channel_id uint32      `json:"channel_id"`
+	data       []AudioData `json:"data"`
+}
 type AudioMessage struct {
 	id       string         `json:"id"`
 	seq_no   uint32         `json:"seq_no"`
 	channels []AudioChannel `json:"channels"`
 }
 
-type AudioChannel struct {
-	channel_id uint32      `json:"channel_id"`
-	data       []AudioData `json:"data"`
-}
-
-func (p *PubSub) wavReaderVoxflo(audioFile string, durationMillisec int) []AudioMessage {
-
-	// Replace 'yourfile.wav' with the actual path to your WAV file
-	filePath := audioFile
-
-	audioMessageArr, err := extractWavChunk(filePath, durationMillisec)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-   return audioMessageArr
-}
 
 func (p *PubSub)  extractWavChunk(inputFilePath string, durationMillisec int) ([]AudioMessage, error) {
 	// Open the input WAV file
@@ -255,3 +241,17 @@ func (p *PubSub)  extractWavChunk(inputFilePath string, durationMillisec int) ([
 
 	return audioMessageArr, nil
 }
+
+func (p *PubSub) wavReaderVoxflo(audioFile string, durationMillisec int) []AudioMessage {
+
+	// Replace 'yourfile.wav' with the actual path to your WAV file
+	filePath := audioFile
+
+	audioMessageArr, err := extractWavChunk(filePath, durationMillisec)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+   return audioMessageArr
+}
+
