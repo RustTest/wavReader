@@ -204,7 +204,7 @@ func (p *PubSub) wavReaderVoxflo(audioFile string, durationMillisec int) []Audio
    return audioMessageArr
 }
 
-func extractWavChunk(inputFilePath string, durationMillisec int) ([]AudioMessage, error) {
+func (p *PubSub)  extractWavChunk(inputFilePath string, durationMillisec int) ([]AudioMessage, error) {
 	// Open the input WAV file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
