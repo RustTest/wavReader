@@ -190,7 +190,7 @@ type AudioMessage struct {
 }
 
 
-func (p *PubSub)  extractWavChunk(inputFilePath string, durationMillisec int) ([]AudioMessage, error) {
+func (p *PubSub)  wavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
 	// Open the input WAV file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
@@ -239,19 +239,8 @@ func (p *PubSub)  extractWavChunk(inputFilePath string, durationMillisec int) ([
 		audioMessageArr = append(audioMessageArr, audioMessage)
 	}
 
-	return audioMessageArr, nil
+	return audioMessageArr
 }
 
-func (p *PubSub) wavReaderVoxflo(audioFile string, durationMillisec int) []AudioMessage {
 
-	// Replace 'yourfile.wav' with the actual path to your WAV file
-	filePath := audioFile
-
-	audioMessageArr, err := extractWavChunk(filePath, durationMillisec)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-   return audioMessageArr
-}
 
