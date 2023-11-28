@@ -194,21 +194,24 @@ func (p *PubSub)  wavReaderVoxflo(inputFilePath string, durationMillisec int) []
 	// Open the input WAV file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
-		return nil, err
+		log.Fatal("error opening file")
+		return nil
 	}
 	defer file.Close()
 
 	// Decode the WAV file
 	decoder := wav.NewDecoder(file)
 	if decoder == nil {
-		return nil, nil
+		log.Fatal("error in decoder")
+		return nil
 	}
 	segmentSamples := 5328
 	// Calculate the number of samples for the desired duration
 	// Read audio data
 	buf, err := decoder.FullPCMBuffer()
 	if err != nil {
-		return nil, err
+		log.Fatal("error in pcm buf)
+			  return nil
 	}
 
 	var int16buf []int16
