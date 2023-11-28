@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"os"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	plog "github.com/apache/pulsar-client-go/pulsar/log"
 	"github.com/sirupsen/logrus"
+	"github.com/go-audio/wav"
 
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
