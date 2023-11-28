@@ -1,6 +1,6 @@
 
 import {check} from 'k6';
-import wavreader from 'k6/x/wavreader';
+import wavreader from 'github.com/RustTest/wavReader';
 
 let client = wavreader.createClient({url: `pulsar://${__ENV.PULSAR_ADDR}`})
 let producer = wavreader.createProducer(client, {topic: __ENV.PULSAR_TOPIC})
