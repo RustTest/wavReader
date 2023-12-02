@@ -10,14 +10,14 @@ export default function() {
   // 3. VU code
 
   console.log(`starting the load for voxflo`);
-  let err = wavreader.publish(producer, audiomessage[i], {}, false, audioFileLocation,333);
+  let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
   check(err, {
   "is send": err => err == null
    })
 }
 
 export function setup() {
-audiomessage = wavreader.wavReaderVoxflo(audioFileLocation,333);
+
 
 }
 

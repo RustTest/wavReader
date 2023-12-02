@@ -110,7 +110,7 @@ func (p *PubSub) Publish(
 	}
 
 	var mes [][]byte = wavReaderVoxflo(inputFilePath, durationMillisec)
-
+	log.Printf("sending total byte arr of length %d", len(mes))
 	for lop := 0; lop < len(mes); lop++ {
 		msg := &pulsar.ProducerMessage{
 			Value:      "",
@@ -131,13 +131,14 @@ func (p *PubSub) Publish(
 			return err
 		}
 		_, err = producer.Send(ctx, msg)
+		log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
 			currentStats.Errors++
 		}
 		if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
 			log.Fatal(errStats)
 		}
-
+		log.Printf("no error delivered")
 	}
 	return err
 }
