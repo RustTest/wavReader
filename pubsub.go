@@ -198,7 +198,7 @@ func convertAudioMessageToByteArr(audiomessage AudioMessage) []byte {
 
 	err := encoder.Encode(audiomessage)
 	if nil != err {
-		log.Printf("error in serializing : %s", err.Error())
+		log.Printf("error in serializing shit : %s", err.Error())
 
 	}
 	return buf.Bytes()
