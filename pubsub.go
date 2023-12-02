@@ -221,7 +221,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 	count := 0
 	var audioMessageArr []AudioMessage
 	for i := 0; i < len(int16buf); i += segmentSamples {
-		log.Println("running on loop")
 		end := i + segmentSamples
 		if end > len(int16buf) {
 			end = len(int16buf)
