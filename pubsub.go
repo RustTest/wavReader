@@ -1,7 +1,9 @@
 package wavreader
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
@@ -21,9 +23,10 @@ import (
 var (
 	errNilState        = errors.New("xk6-pubsub: publisher's state is nil")
 	errNilStateOfStats = errors.New("xk6-pubsub: stats's state is nil")
+
 )
 
-type PublisherStats struct {
+type PublisherStats struct { 
 	Topic        string
 	ProducerName string
 	Messages     int
@@ -84,6 +87,15 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 		log.Fatalf("failed to create producer, error: %+v", err)
 	}
 	return producer
+}
+
+
+
+func(p *PubSub) runLoad(producer pulsar.Producer) {
+	for i := 0; i < len(audioMessageArr); i ++ {
+		Publish(producer,audioMessageArr[i]. )
+
+	}
 }
 
 func (p *PubSub) Publish(
@@ -189,10 +201,11 @@ type AudioMessage struct {
 	channels []AudioChannel `json:"channels"`
 }
 
-func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
+func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	// Open the input WAV file
 	//	log.Println("geting the wavReader")
 	file, err := os.Open(inputFilePath)
+	var audioMessageBytesArr [][]byte
 	if err != nil {
 		log.Fatal("error opening file")
 		return nil
@@ -219,7 +232,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 		int16buf = append(int16buf, int16(value))
 	}
 	count := 0
-	var audioMessageArr []AudioMessage
 	for i := 0; i < len(int16buf); i += segmentSamples {
 		end := i + segmentSamples
 		if end > len(int16buf) {
@@ -234,13 +246,27 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 			channel_id: 1,
 			data:       []AudioData{audioData},
 		}
-		audioMessage := AudioMessage{
+		audioMessage := audioMessage{
 			id:       "1",
 			seq_no:   uint32(count),
 			channels: []AudioChannel{audioChannel},
 		}
-		audioMessageArr = append(audioMessageArr, audioMessage)
+		var res []byte =  convertAudioMessageToByteArr(audioMessage)
+		log.Println("size of bytes are %d",len(res))
+		audioMessageBytesArr = append(audioMessageArr,)
+	
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
-	return audioMessageArr
+	return audioMessageBytesArr
+}
+
+func(p *PubSub) convertAudioMessageToByteArr(audiomessage AudioMessage ) [] byte {
+    var buf bytes.Buffer
+	encoder := gob.NewEncoder(&buf)
+
+	err := encoder.Encode(audiomessage);
+	if(nil !=err) {
+		log.fatal("error in serializing")
+	}
+	return buf.Bytes()
 }
