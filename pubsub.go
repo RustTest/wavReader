@@ -23,10 +23,9 @@ import (
 var (
 	errNilState        = errors.New("xk6-pubsub: publisher's state is nil")
 	errNilStateOfStats = errors.New("xk6-pubsub: stats's state is nil")
-
 )
 
-type PublisherStats struct { 
+type PublisherStats struct {
 	Topic        string
 	ProducerName string
 	Messages     int
@@ -87,15 +86,6 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 		log.Fatalf("failed to create producer, error: %+v", err)
 	}
 	return producer
-}
-
-
-
-func(p *PubSub) runLoad(producer pulsar.Producer) {
-	for i := 0; i < len(audioMessageArr); i ++ {
-		Publish(producer,audioMessageArr[i]. )
-
-	}
 }
 
 func (p *PubSub) Publish(
@@ -201,6 +191,17 @@ type AudioMessage struct {
 	channels []AudioChannel `json:"channels"`
 }
 
+func convertAudioMessageToByteArr(audiomessage AudioMessage) []byte {
+	var buf bytes.Buffer
+	encoder := gob.NewEncoder(&buf)
+
+	err := encoder.Encode(audiomessage)
+	if nil != err {
+		log.Fatal("error in serializing")
+	}
+	return buf.Bytes()
+}
+
 func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	// Open the input WAV file
 	//	log.Println("geting the wavReader")
@@ -246,27 +247,16 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][
 			channel_id: 1,
 			data:       []AudioData{audioData},
 		}
-		audioMessage := audioMessage{
+		audioMessage := AudioMessage{
 			id:       "1",
 			seq_no:   uint32(count),
 			channels: []AudioChannel{audioChannel},
 		}
-		var res []byte =  convertAudioMessageToByteArr(audioMessage)
-		log.Println("size of bytes are %d",len(res))
-		audioMessageBytesArr = append(audioMessageArr,)
-	
+		var res []byte = convertAudioMessageToByteArr(audioMessage)
+		log.Printf("size of bytes are %d", len(res))
+		audioMessageBytesArr = append(audioMessageBytesArr, res)
+
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageBytesArr
-}
-
-func(p *PubSub) convertAudioMessageToByteArr(audiomessage AudioMessage ) [] byte {
-    var buf bytes.Buffer
-	encoder := gob.NewEncoder(&buf)
-
-	err := encoder.Encode(audiomessage);
-	if(nil !=err) {
-		log.fatal("error in serializing")
-	}
-	return buf.Bytes()
 }

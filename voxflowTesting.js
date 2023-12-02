@@ -15,8 +15,9 @@ audiomessage.array.forEach(element => {
   let err = wavreader.publish(producer, audiomessage[i], {}, false);
   check(err, {
   "is send": err => err == null
-})
+   })
 });
+}
 
 export function setup() {
 audiomessage = wavreader.wavReaderVoxflo(audioFileLocation,333);
