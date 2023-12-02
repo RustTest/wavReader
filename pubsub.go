@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 	"os"
+	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
 	plog "github.com/apache/pulsar-client-go/pulsar/log"
-	"github.com/sirupsen/logrus"
 	"github.com/go-audio/wav"
+	"github.com/sirupsen/logrus"
 
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
@@ -55,6 +55,7 @@ func (p *PubSub) CreateClient(clientConfig PulsarClientConfig) (pulsar.Client, e
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create pulsar client, url: %s, error: %+v", clientConfig.URL, err)
+	
 	}
 	return client, nil
 }
@@ -174,7 +175,6 @@ func ReportPubishMetrics(ctx context.Context, currentStats PublisherStats) error
 	return nil
 }
 
-
 type AudioData struct {
 	pcm_bytes   []int16 `json:"pcm_bytes"`
 	sample_rate uint32  `json:"sample_rate"`
@@ -189,8 +189,7 @@ type AudioMessage struct {
 	channels []AudioChannel `json:"channels"`
 }
 
-
-func (p *PubSub)  WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
+func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
 	// Open the input WAV file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
@@ -211,7 +210,7 @@ func (p *PubSub)  WavReaderVoxflo(inputFilePath string, durationMillisec int) []
 	buf, err := decoder.FullPCMBuffer()
 	if err != nil {
 		log.Fatal("error in pcm buf")
-			  return nil
+		return nil
 	}
 
 	var int16buf []int16
@@ -244,6 +243,3 @@ func (p *PubSub)  WavReaderVoxflo(inputFilePath string, durationMillisec int) []
 
 	return audioMessageArr
 }
-
-
-
