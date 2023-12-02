@@ -191,7 +191,7 @@ type AudioMessage struct {
 
 func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
 	// Open the input WAV file
-	log.Println("geting the wavReader")
+	//	log.Println("geting the wavReader")
 	file, err := os.Open(inputFilePath)
 	if err != nil {
 		log.Fatal("error opening file")
@@ -242,6 +242,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 		}
 		audioMessageArr = append(audioMessageArr, audioMessage)
 	}
-	log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
+	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageArr
 }
