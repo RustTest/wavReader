@@ -55,7 +55,7 @@ func (p *PubSub) CreateClient(clientConfig PulsarClientConfig) (pulsar.Client, e
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create pulsar client, url: %s, error: %+v", clientConfig.URL, err)
-	
+
 	}
 	return client, nil
 }
@@ -191,6 +191,7 @@ type AudioMessage struct {
 
 func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []AudioMessage {
 	// Open the input WAV file
+	log.Println("geting the wavReader")
 	file, err := os.Open(inputFilePath)
 	if err != nil {
 		log.Fatal("error opening file")
@@ -220,6 +221,7 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 	count := 0
 	var audioMessageArr []AudioMessage
 	for i := 0; i < len(int16buf); i += segmentSamples {
+		log.Println("running on loop")
 		end := i + segmentSamples
 		if end > len(int16buf) {
 			end = len(int16buf)
@@ -240,6 +242,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 		}
 		audioMessageArr = append(audioMessageArr, audioMessage)
 	}
-
+	log.Println("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageArr
 }
