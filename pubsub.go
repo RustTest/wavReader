@@ -242,6 +242,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) []A
 		}
 		audioMessageArr = append(audioMessageArr, audioMessage)
 	}
-	log.Println("length isaudioMessageArr %d", len(audioMessageArr))
+	log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageArr
 }
