@@ -94,12 +94,13 @@ func (p *PubSub) Publish(
 	body []byte,
 	properties map[string]string,
 	async bool,
+	inputFilePath string,
+	durationMillisec int,
 ) error {
 	state := lib.GetState(ctx)
 	if state == nil {
 		return errNilState
 	}
-
 	var err error
 	currentStats := PublisherStats{
 		Topic:        producer.Topic(),
@@ -108,37 +109,36 @@ func (p *PubSub) Publish(
 		Messages:     1,
 	}
 
-	msg := &pulsar.ProducerMessage{
-		Value:      "",
-		Payload:    body,
-		Properties: properties,
+	var mes [][]byte = wavReaderVoxflo(inputFilePath, durationMillisec)
+
+	for lop := 0; lop < len(mes); lop++ {
+		msg := &pulsar.ProducerMessage{
+			Value:      "",
+			Payload:    mes[lop],
+			Properties: properties,
+		}
+		if async {
+			producer.SendAsync(
+				ctx,
+				msg,
+				func(mi pulsar.MessageID, pm *pulsar.ProducerMessage, e error) {
+					if e != nil {
+						err = e
+						currentStats.Errors++
+					}
+				},
+			)
+			return err
+		}
+		_, err = producer.Send(ctx, msg)
+		if err != nil {
+			currentStats.Errors++
+		}
+		if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
+			log.Fatal(errStats)
+		}
+
 	}
-
-	// async send
-	if async {
-		producer.SendAsync(
-			ctx,
-			msg,
-			func(mi pulsar.MessageID, pm *pulsar.ProducerMessage, e error) {
-				if e != nil {
-					err = e
-					currentStats.Errors++
-				}
-			},
-		)
-
-		return err
-	}
-
-	_, err = producer.Send(ctx, msg)
-	if err != nil {
-		currentStats.Errors++
-	}
-
-	if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
-		log.Fatal(errStats)
-	}
-
 	return err
 }
 
@@ -202,9 +202,9 @@ func convertAudioMessageToByteArr(audiomessage AudioMessage) []byte {
 	return buf.Bytes()
 }
 
-func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
+func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	// Open the input WAV file
-	//	log.Println("geting the wavReader")
+	log.Println("geting the wavReader")
 	file, err := os.Open(inputFilePath)
 	var audioMessageBytesArr [][]byte
 	if err != nil {
@@ -242,7 +242,6 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][
 			pcm_bytes:   int16buf[i:end],
 			sample_rate: 16,
 		}
-		count++
 		audioChannel := AudioChannel{
 			channel_id: 1,
 			data:       []AudioData{audioData},
@@ -252,10 +251,10 @@ func (p *PubSub) WavReaderVoxflo(inputFilePath string, durationMillisec int) [][
 			seq_no:   uint32(count),
 			channels: []AudioChannel{audioChannel},
 		}
+		count++
 		var res []byte = convertAudioMessageToByteArr(audioMessage)
 		log.Printf("size of bytes are %d", len(res))
 		audioMessageBytesArr = append(audioMessageBytesArr, res)
-
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageBytesArr
