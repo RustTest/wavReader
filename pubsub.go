@@ -179,38 +179,67 @@ func ReportPubishMetrics(ctx context.Context, currentStats PublisherStats) error
 }
 
 type AudioData struct {
-	pcm_bytes   []int16 `json:"pcm_bytes"`
-	sample_rate uint32  `json:"sample_rate"`
+	PcmBytes   []int16 `json:"pcm_bytes"`
+	SampleRate uint32  `json:"sample_rate"`
 }
+
+// func (ad AudioData) GetPcm_bytes() []int16 {
+// 	return ad.pcm_bytes
+// }
+
+//	func (ad AudioData) GetSample_rate() uint32 {
+//		return ad.sample_rate
+//	}
 type AudioChannel struct {
-	channel_id uint32      `json:"channel_id"`
-	data       []AudioData `json:"data"`
+	Channel_id uint32      `json:"channel_id"`
+	Data       []AudioData `json:"data"`
 }
+
+// func (ac AudioChannel) GetChannel_id() uint32 {
+// 	return ac.channel_id
+// }
+
+// func (ac AudioChannel) GetData() []AudioData {
+// 	return ac.data
+// }
+
 type AudioMessage struct {
-	id       string         `json:"id"`
-	seq_no   uint32         `json:"seq_no"`
-	channels []AudioChannel `json:"channels"`
+	Id       string         `json:"id"`
+	Seq_no   uint32         `json:"seq_no"`
+	Channels []AudioChannel `json:"channels"`
 }
+
+// func (am AudioMessage) GetId() string {
+// 	return am.id
+// }
+
+// func (am AudioMessage) GetSeqNo() uint32 {
+// 	return am.seqNo
+// }
+
+// func (am AudioMessage) GetChannels() []AudioChannel {
+// 	return am.channels
+// }
 
 func NewAudioData(pcmBytes []int16, sampleRate uint32) *AudioData {
 	return &AudioData{
-		pcm_bytes:   pcmBytes,
-		sample_rate: sampleRate,
+		PcmBytes:   pcmBytes,
+		SampleRate: sampleRate,
 	}
 }
 
 func NewAudioChannel(channelID uint32, data []AudioData) *AudioChannel {
 	return &AudioChannel{
-		channel_id: channelID,
-		data:       data,
+		Channel_id: channelID,
+		Data:       data,
 	}
 }
 
 func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMessage {
 	return &AudioMessage{
-		id:       id,
-		seq_no:   seqNo,
-		channels: channels,
+		Id:       id,
+		Seq_no:   seqNo,
+		Channels: channels,
 	}
 }
 
