@@ -192,7 +192,29 @@ type AudioMessage struct {
 	channels []AudioChannel `json:"channels"`
 }
 
-func convertAudioMessageToByteArr(audiomessage AudioMessage) []byte {
+func NewAudioData(pcmBytes []int16, sampleRate uint32) *AudioData {
+	return &AudioData{
+		pcm_bytes:   pcmBytes,
+		sample_rate: sampleRate,
+	}
+}
+
+func NewAudioChannel(channelID uint32, data []AudioData) *AudioChannel {
+	return &AudioChannel{
+		channel_id: channelID,
+		data:       data,
+	}
+}
+
+func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMessage {
+	return &AudioMessage{
+		id:       id,
+		seq_no:   seqNo,
+		channels: channels,
+	}
+}
+
+func convertAudioMessageToByteArr(audiomessage *AudioMessage) []byte {
 	var buf bytes.Buffer
 	encoder := gob.NewEncoder(&buf)
 
@@ -234,25 +256,28 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	for _, value := range buf.Data {
 		int16buf = append(int16buf, int16(value))
 	}
-	count := 0
+	var count uint32 = 0
 	for i := 0; i < len(int16buf); i += segmentSamples {
 		end := i + segmentSamples
 		if end > len(int16buf) {
 			end = len(int16buf)
 		}
-		audioData := AudioData{
-			pcm_bytes:   int16buf[i:end],
-			sample_rate: 16,
-		}
-		audioChannel := AudioChannel{
-			channel_id: 1,
-			data:       []AudioData{audioData},
-		}
-		audioMessage := AudioMessage{
-			id:       "1",
-			seq_no:   uint32(count),
-			channels: []AudioChannel{audioChannel},
-		}
+		audioData := NewAudioData(int16buf[i:end], 16)
+		audioChannel := NewAudioChannel(1, []AudioData{*audioData})
+		audioMessage := NewAudioMessage("load", count, []AudioChannel{*audioChannel})
+		// AudioData{
+		// 	pcm_bytes:   int16buf[i:end],
+		// 	sample_rate: 16,
+		// }
+		// audioChannel := AudioChannel{
+		// 	channel_id: 1,
+		// 	data:       []AudioData{audioData},
+		// }
+		// audioMessage := AudioMessage{
+		// 	id:       "1",
+		// 	seq_no:   uint32(count),
+		// 	channels: []AudioChannel{audioChannel},
+		// }
 		count++
 		var res []byte = convertAudioMessageToByteArr(audioMessage)
 		log.Printf("size of bytes are %d", len(res))
