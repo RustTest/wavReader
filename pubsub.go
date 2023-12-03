@@ -300,7 +300,7 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 			log.Printf("error in serializing: %s", err.Error())
 			return nil
 		}
-		log.Printf("size of bytes are %d", len(data))
+		log.Printf("size of bytes are with the new encoder%d", len(data))
 		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
