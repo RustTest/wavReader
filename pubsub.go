@@ -191,8 +191,8 @@ type AudioData struct {
 //		return ad.sample_rate
 //	}
 type AudioChannel struct {
-	Channel_id uint32      `json:"channel_id"`
-	Data       []AudioData `json:"data"`
+	ChannelId uint32      `json:"channel_id"`
+	Data      []AudioData `json:"data"`
 }
 
 // func (ac AudioChannel) GetChannel_id() uint32 {
@@ -205,7 +205,7 @@ type AudioChannel struct {
 
 type AudioMessage struct {
 	Id       string         `json:"id"`
-	Seq_no   uint32         `json:"seq_no"`
+	SeqNo    uint32         `json:"seq_no"`
 	Channels []AudioChannel `json:"channels"`
 }
 
@@ -230,15 +230,15 @@ func NewAudioData(pcmBytes []int16, sampleRate uint32) *AudioData {
 
 func NewAudioChannel(channelID uint32, data []AudioData) *AudioChannel {
 	return &AudioChannel{
-		Channel_id: channelID,
-		Data:       data,
+		ChannelId: channelID,
+		Data:      data,
 	}
 }
 
 func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMessage {
 	return &AudioMessage{
 		Id:       id,
-		Seq_no:   seqNo,
+		SeqNo:    seqNo,
 		Channels: channels,
 	}
 }
