@@ -1,9 +1,7 @@
 package wavreader
 
 import (
-	"bytes"
 	"context"
-	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
@@ -14,7 +12,7 @@ import (
 	plog "github.com/apache/pulsar-client-go/pulsar/log"
 	"github.com/go-audio/wav"
 	"github.com/sirupsen/logrus"
-
+	"github.com/vmihailenco/msgpack/v5"
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
 	"go.k6.io/k6/stats"
@@ -131,6 +129,7 @@ func (p *PubSub) Publish(
 			return err
 		}
 		_, err = producer.Send(ctx, msg)
+
 		log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
 			currentStats.Errors++
@@ -179,8 +178,8 @@ func ReportPubishMetrics(ctx context.Context, currentStats PublisherStats) error
 }
 
 type AudioData struct {
-	PcmBytes   []int16 `json:"pcm_bytes"`
-	SampleRate uint32  `json:"sample_rate"`
+	PcmBytes   []int16 `msgpack:"pcm_bytes"`
+	SampleRate uint32  `msgpack:"sample_rate"`
 }
 
 // func (ad AudioData) GetPcm_bytes() []int16 {
@@ -191,8 +190,8 @@ type AudioData struct {
 //		return ad.sample_rate
 //	}
 type AudioChannel struct {
-	ChannelId uint32      `json:"channel_id"`
-	Data      []AudioData `json:"data"`
+	ChannelId uint32      `msgpack:"channel_id"`
+	Data      []AudioData `msgpack:"data"`
 }
 
 // func (ac AudioChannel) GetChannel_id() uint32 {
@@ -204,9 +203,9 @@ type AudioChannel struct {
 // }
 
 type AudioMessage struct {
-	Id       string         `json:"id"`
-	SeqNo    uint32         `json:"seq_no"`
-	Channels []AudioChannel `json:"channels"`
+	Id       string         `msgpack:"id"`
+	SeqNo    uint32         `msgpack:"seq_no"`
+	Channels []AudioChannel `msgpack:"channels"`
 }
 
 // func (am AudioMessage) GetId() string {
@@ -241,18 +240,6 @@ func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMes
 		SeqNo:    seqNo,
 		Channels: channels,
 	}
-}
-
-func convertAudioMessageToByteArr(audiomessage *AudioMessage) []byte {
-	var buf bytes.Buffer
-	encoder := gob.NewEncoder(&buf)
-
-	err := encoder.Encode(audiomessage)
-	if nil != err {
-		log.Printf("error in serializing: %s", err.Error())
-
-	}
-	return buf.Bytes()
 }
 
 func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
@@ -308,9 +295,13 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		// 	channels: []AudioChannel{audioChannel},
 		// }
 		count++
-		var res []byte = convertAudioMessageToByteArr(audioMessage)
-		log.Printf("size of bytes are %d", len(res))
-		audioMessageBytesArr = append(audioMessageBytesArr, res)
+		data, err := msgpack.Marshal(&audioMessage)
+		if nil != err {
+			log.Printf("error in serializing: %s", err.Error())
+			return nil
+		}
+		log.Printf("size of bytes are %d", len(data))
+		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
 	return audioMessageBytesArr

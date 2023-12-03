@@ -3,11 +3,14 @@ module github.com/RustTest/wavReader
 go 1.17
 
 require go.k6.io/k6 v0.36.0
+
 require (
-	github.com/go-audio/audio v1.0.0 // indirect
-	github.com/go-audio/riff v1.0.0 // indirect
-	github.com/go-audio/wav v1.1.0 // indirect
-github.com/99designs/keyring v1.1.6 // indirect
+	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
+	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+)
+
+require (
+	github.com/99designs/keyring v1.1.6 // indirect
 	github.com/AthenZ/athenz v1.10.39 // indirect
 	github.com/DataDog/zstd v1.5.0 // indirect
 	github.com/apache/pulsar-client-go v0.8.0
@@ -21,6 +24,9 @@ github.com/99designs/keyring v1.1.6 // indirect
 	github.com/dop251/goja v0.0.0-20220110113543-261677941f3c // indirect
 	github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b // indirect
 	github.com/fatih/color v1.12.0 // indirect
+	github.com/go-audio/audio v1.0.0 // indirect
+	github.com/go-audio/riff v1.0.0 // indirect
+	github.com/go-audio/wav v1.1.0 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.4-0.20211119122758-180fcef48034+incompatible // indirect
 	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
