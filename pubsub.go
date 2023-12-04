@@ -304,5 +304,6 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
+	audioMessageBytesArr = append(audioMessageBytesArr, []byte{})
 	return audioMessageBytesArr
 }
