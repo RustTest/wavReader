@@ -1,9 +1,11 @@
 
 import {check} from 'k6';
 import wavreader from 'k6/x/wavreader';
+import http from 'k6/http';
 
 let client = wavreader.createClient({url: `pulsar://${__ENV.PULSAR_ADDR}`})
-const audioFileLocation ="/Users/prasadchandrasekaran/code/lasthope/wavReader/652-130726-combined.wav";
+
+const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/652-130726-combined.wav";
 
 export default function() {
   // 3. VU code
@@ -14,20 +16,26 @@ export default function() {
   check(err, {
   "is send": err => err == null
    })
+
 }
 
-function callControllerForTopic()  {
+
+export function callControllerForTopic()  {
   const payload = JSON.stringify({
-    stream_infra: 'Pulsar'
+    stream_infra: "Pulsar"
   });
   const headers = { 'Content-Type': 'application/json' };
   const res = http.post('http://172.31.12.28:9001/flows', payload, { headers });
+	const obj =JSON.parse(res.body);
+	console.log(obj.flow_id);
+        const resTopic = "non-persistent://public/default/"+obj.flow_id;
+	console.log("toipc name is "+ resTopic);
   check(res, {
     'Post status is 200': (r) => res.status === 200,
     'Post Content-Type header': (r) => res.headers['Content-Type'] === 'application/json',
-    'Post response name': (r) => res.status === 200 && res.json().json.name === 'lorem',
+    'Post response name': (r) => res.status === 200,
   });
-  return res;
+  return resTopic;
 }
 
 
