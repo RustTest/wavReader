@@ -108,7 +108,7 @@ func (p *PubSub) Publish(
 	}
 
 	var mes [][]byte = wavReaderVoxflo(inputFilePath, durationMillisec)
-	log.Printf("sending total byte arr of length %d", len(mes))
+	//log.Printf("sending total byte arr of length %d", len(mes))
 	for lop := 0; lop < len(mes); lop++ {
 		msg := &pulsar.ProducerMessage{
 			Value:      "",
@@ -130,7 +130,7 @@ func (p *PubSub) Publish(
 		}
 		_, err = producer.Send(ctx, msg)
 
-		log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
+		//log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
 			currentStats.Errors++
 		}
@@ -139,6 +139,7 @@ func (p *PubSub) Publish(
 		}
 		log.Printf("no error delivered")
 	}
+	producer.Close()
 	return err
 }
 
@@ -300,7 +301,7 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 			log.Printf("error in serializing: %s", err.Error())
 			return nil
 		}
-		log.Printf("size of bytes are with the new encoder%d", len(data))
+		//log.Printf("size of bytes are with the new encoder%d", len(data))
 		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))

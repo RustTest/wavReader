@@ -47,6 +47,5 @@ export function setup() {
 export function teardown() {
   // 4. teardown code
   wavreader.closeClient(client)
-  wavreader.closeProducer(producer)
   console.log("teardown!!")
 }
