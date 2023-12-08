@@ -29,6 +29,7 @@ type PublisherStats struct {
 	Messages     int
 	Errors       int
 	Bytes        int64
+	Duration     time.Duration
 }
 
 type PubSub struct{}
@@ -109,6 +110,7 @@ func (p *PubSub) Publish(
 
 	var mes [][]byte = wavReaderVoxflo(inputFilePath, durationMillisec)
 	//log.Printf("sending total byte arr of length %d", len(mes))
+
 	for lop := 0; lop < len(mes); lop++ {
 		msg := &pulsar.ProducerMessage{
 			Value:      "",
@@ -128,7 +130,12 @@ func (p *PubSub) Publish(
 			)
 			return err
 		}
+		msg.EventTime = time.Now()
+		var iterationStartTime = time.Now()
 		_, err = producer.Send(ctx, msg)
+		currentStats.Duration = time.Since(iterationStartTime)
+		currentStats.Bytes = (int64(len(mes[lop])))
+		currentStats.Messages++
 
 		//log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
@@ -174,6 +181,13 @@ func ReportPubishMetrics(ctx context.Context, currentStats PublisherStats) error
 		Metric: PublishBytes,
 		Tags:   stats.IntoSampleTags(&tags),
 		Value:  float64(currentStats.Bytes),
+	})
+
+	stats.PushIfNotDone(ctx, state.Samples, stats.Sample{
+		Time:   now,
+		Metric: PublishDuration,
+		Tags:   stats.IntoSampleTags(&tags),
+		Value:  float64(currentStats.Duration),
 	})
 	return nil
 }
