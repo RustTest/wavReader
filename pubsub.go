@@ -133,10 +133,12 @@ func (p *PubSub) Publish(
 		msg.EventTime = time.Now()
 		var iterationStartTime = time.Now()
 		_, err = producer.Send(ctx, msg)
-		currentStats.Duration = time.Since(iterationStartTime)
+		// need to get the elasped time in micro second
+		currentStats.Duration = time.Since(iterationStartTime) / time.Microsecond
 		currentStats.Bytes = (int64(len(mes[lop])))
 		currentStats.Messages++
 
+		log.Printf("message %d", currentStats.Duration)
 		//log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
 			currentStats.Errors++
