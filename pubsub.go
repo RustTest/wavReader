@@ -138,7 +138,7 @@ func (p *PubSub) Publish(
 		currentStats.Bytes = (int64(len(mes[lop])))
 		currentStats.Messages++
 
-		log.Printf("message %d", currentStats.Duration)
+		//log.Printf("message %d", currentStats.Duration)
 		//log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
 		if err != nil {
 			currentStats.Errors++
