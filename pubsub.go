@@ -146,7 +146,7 @@ func (p *PubSub) Publish(
 		if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
 			log.Fatal(errStats)
 		}
-		log.Printf("no error delivered")
+		//log.Printf("no error delivered")
 	}
 	producer.Close()
 	return err
@@ -321,6 +321,9 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
 	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
+	// add one element array of bytes to the end of the array
+	// add one element array of bytes to the end of the array
+
 	audioMessageBytesArr = append(audioMessageBytesArr, []byte{})
 	return audioMessageBytesArr
 }
