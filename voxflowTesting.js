@@ -2,6 +2,7 @@
 import {check} from 'k6';
 import wavreader from 'k6/x/wavreader';
 import http from 'k6/http';
+import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 
 let client = wavreader.createClient({url: `pulsar://${__ENV.PULSAR_ADDR}`})
 
@@ -9,9 +10,9 @@ const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/652-130
 
 export default function() {
   // 3. VU code
-  let res = callControllerForTopic();
+  //let res = callControllerForTopic();
   console.log(`starting the load for voxflo`);
-  let producer = wavreader.createProducer(client, {topic: res})
+  let producer = wavreader.createProducer(client, {topic: uuidv4()})
   let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
   check(err, {
   "is send": err => err == null
