@@ -29,7 +29,7 @@ type PublisherStats struct {
 	Messages     int
 	Errors       int
 	Bytes        int64
-	Duration     time.Duration
+	Duration     int64
 }
 
 type PubSub struct{}
@@ -134,7 +134,7 @@ func (p *PubSub) Publish(
 		var iterationStartTime = time.Now()
 		_, err = producer.Send(ctx, msg)
 		// need to get the elasped time in micro second
-		currentStats.Duration = time.Since(iterationStartTime) / time.Microsecond
+		currentStats.Duration = time.Since(iterationStartTime).Microseconds()
 		currentStats.Bytes = (int64(len(mes[lop])))
 		currentStats.Messages++
 
