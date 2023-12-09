@@ -30,6 +30,7 @@ type PublisherStats struct {
 	Errors       int
 	Bytes        int64
 	Duration     int64
+	vu           int64
 }
 
 type PubSub struct{}
@@ -71,13 +72,14 @@ func (p *PubSub) CloseProducer(producer pulsar.Producer) {
 
 func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pulsar.Producer {
 	option := pulsar.ProducerOptions{
-		Topic:               config.Topic,
-		Schema:              pulsar.NewStringSchema(nil),
-		CompressionType:     pulsar.LZ4,
-		CompressionLevel:    pulsar.Faster,
-		BatchingMaxMessages: 100,
-		MaxPendingMessages:  100,
-		SendTimeout:         time.Second,
+		Topic: config.Topic,
+		Name:  config.Topic,
+		//Schema:              pulsar.NewStringSchema(nil),
+		// CompressionType:     pulsar.LZ4,
+		// CompressionLevel:    pulsar.Faster,
+		// BatchingMaxMessages: 100,
+		// MaxPendingMessages:  5,
+		// SendTimeout:         time.Second/300,
 	}
 
 	producer, err := client.CreateProducer(option)
