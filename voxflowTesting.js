@@ -4,15 +4,16 @@ import wavreader from 'k6/x/wavreader';
 import http from 'k6/http';
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 
-let client = wavreader.createClient({url: `pulsar://${__ENV.PULSAR_ADDR}`})
+// console.log("runnign here");
+let client = wavreader.createClient({url: `pulsar://${__ENV.PULSAR_ADDR}`});
+const audioFileLocation ="/Users/prasadchandrasekaran/Code/lasthope/voxflowLoadTest/wavReader/652-130726-combined.wav";
 
-const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/652-130726-combined.wav";
-
-export default function() {
+export default function(data) {
   // 3. VU code
   //let res = callControllerForTopic();
   console.log(`starting the load for voxflo`);
-  let producer = wavreader.createProducer(client, {topic: uuidv4()})
+  const topicgp = "non-persistent://public/default/"+uuidv4();
+  let producer = wavreader.createProducer(client, {topic:topicgp})
   let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
   check(err, {
   "is send": err => err == null
@@ -42,11 +43,10 @@ export function callControllerForTopic()  {
 
 export function setup() {
 
-
 }
 
 export function teardown() {
   // 4. teardown code
-  wavreader.closeClient(client)
-  console.log("teardown!!")
+  wavreader.closeClient(client);
+  console.log("teardown!!");
 }
