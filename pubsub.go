@@ -3,15 +3,12 @@ package wavreader
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
-	plog "github.com/apache/pulsar-client-go/pulsar/log"
 	"github.com/go-audio/wav"
-	"github.com/sirupsen/logrus"
 	"github.com/vmihailenco/msgpack/v5"
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
@@ -22,6 +19,7 @@ var (
 	errNilState        = errors.New("xk6-pubsub: publisher's state is nil")
 	errNilStateOfStats = errors.New("xk6-pubsub: stats's state is nil")
 )
+//var pulsarClient pulsar.Client
 
 type PublisherStats struct {
 	Topic        string
@@ -47,20 +45,22 @@ type ProducerConfig struct {
 	Topic string
 }
 
-func (p *PubSub) CreateClient(clientConfig PulsarClientConfig) (pulsar.Client, error) {
-	logger := logrus.StandardLogger()
-	logger.SetLevel(logrus.ErrorLevel)
-	client, err := pulsar.NewClient(pulsar.ClientOptions{
-		URL:               clientConfig.URL,
-		ConnectionTimeout: 3 * time.Second,
-		Logger:            plog.NewLoggerWithLogrus(logger),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create pulsar client, url: %s, error: %+v", clientConfig.URL, err)
+// func (p *PubSub) CreateClient(clientConfig PulsarClientConfig) (pulsar.Client, error) {
+// 	if pulsarClient == nil {
+// 		logger := logrus.StandardLogger()
+// 		logger.SetLevel(logrus.ErrorLevel)
+// 		pulsarClient, err := pulsar.NewClient(pulsar.ClientOptions{
+// 			URL: clientConfig.URL,
+// 			//	ConnectionTimeout: 3 * time.Second,
+// 			Logger: plog.NewLoggerWithLogrus(logger),
+// 		})
+// 		if err != nil {
+// 			return nil, fmt.Errorf("failed to create pulsar client, url: %s, error: %+v", clientConfig.URL, err)
 
-	}
-	return client, nil
-}
+// 		}
+// 	}
+// 	return pulsarClient, nil
+// }
 
 func (p *PubSub) CloseClient(client pulsar.Client) {
 	client.Close()
@@ -71,6 +71,7 @@ func (p *PubSub) CloseProducer(producer pulsar.Producer) {
 }
 
 func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pulsar.Producer {
+	log.Printf("topic name in create producer %s", config.Topic)
 	option := pulsar.ProducerOptions{
 		Topic: config.Topic,
 		Name:  config.Topic,
