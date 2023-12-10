@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
+	plog "github.com/apache/pulsar-client-go/pulsar/log"
 	"github.com/go-audio/wav"
+	"github.com/sirupsen/logrus"
 	"github.com/vmihailenco/msgpack/v5"
 	"go.k6.io/k6/js/modules"
 	"go.k6.io/k6/lib"
@@ -19,7 +21,6 @@ var (
 	errNilState        = errors.New("xk6-pubsub: publisher's state is nil")
 	errNilStateOfStats = errors.New("xk6-pubsub: stats's state is nil")
 )
-//var pulsarClient pulsar.Client
 
 type PublisherStats struct {
 	Topic        string
@@ -43,6 +44,29 @@ type PulsarClientConfig struct {
 
 type ProducerConfig struct {
 	Topic string
+}
+
+var pulsarClient *pulsar.Client
+
+func (p *PubSub) CreatePulsarClient(clientConfig PulsarClientConfig) *pulsar.Client {
+
+	if pulsarClient == nil {
+		logger := logrus.StandardLogger()
+		logger.SetLevel(logrus.ErrorLevel)
+		var err error
+		var pulsarC pulsar.Client
+		pulsarC, err = pulsar.NewClient(pulsar.ClientOptions{
+			URL: clientConfig.URL,
+			//	ConnectionTimeout: 3 * time.Second,
+			Logger: plog.NewLoggerWithLogrus(logger),
+		})
+		pulsarClient = &pulsarC
+		if err != nil {
+			//return nil, fmt.Errorf("failed to create pulsar producer, topic: %s, error: %+v", producerConfig.Topic, err)
+		}
+	}
+
+	return pulsarClient
 }
 
 // func (p *PubSub) CreateClient(clientConfig PulsarClientConfig) (pulsar.Client, error) {
