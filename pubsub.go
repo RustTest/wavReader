@@ -160,7 +160,7 @@ func (p *PubSub) Publish(
 		msg.EventTime = time.Now()
 		var iterationStartTime = time.Now()
 		_, err = producer.Send(ctx, msg)
-		// need to get the elasped time in micro second
+		// need to get the elasped time in micro secon
 		currentStats.Duration = time.Since(iterationStartTime).Microseconds()
 		currentStats.Bytes = (int64(len(mes[lop])))
 		currentStats.Messages++
@@ -173,6 +173,11 @@ func (p *PubSub) Publish(
 		if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
 			log.Fatal(errStats)
 		}
+		if time.Since(iterationStartTime).Milliseconds() < 300 {
+			time.Sleep(time.Millisecond *
+				time.Duration(300-time.Since(iterationStartTime).Milliseconds()))
+		}
+
 		//log.Printf("no error delivered")
 	}
 	producer.Close()
