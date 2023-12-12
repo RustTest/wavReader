@@ -162,7 +162,7 @@ func (p *PubSub) Publish(
 		var iterationStartTime = time.Now()
 		_, err = producer.Send(ctx, msg)
 		// need to get the elasped time in micro secon
-		currentStats.Duration = time.Since(iterationStartTime).Microseconds()
+		currentStats.Duration = time.Since(iterationStartTime).Milliseconds()
 		currentStats.Bytes = (int64(len(mes[lop])))
 		currentStats.Messages++
 
