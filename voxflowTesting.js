@@ -23,7 +23,7 @@ export const options = {
 export default function(data) {
   // 3. VU code
   //let res = callControllerForTopic();
-  console.log(`starting the load for voxflo`);
+  //console.log(`starting the load for voxflo`);
   const topicgp = "non-persistent://public/default/"+uuidv4();
   let producer = wavreader.createProducer(client, {topic:topicgp})
   let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
@@ -41,9 +41,9 @@ export function callControllerForTopic()  {
   const headers = { 'Content-Type': 'application/json' };
   const res = http.post('http://172.31.12.28:9001/flows', payload, { headers });
 	const obj =JSON.parse(res.body);
-	console.log(obj.flow_id);
+	//console.log(obj.flow_id);
         const resTopic = "non-persistent://public/default/"+obj.flow_id;
-	console.log("toipc name is "+ resTopic);
+	//console.log("toipc name is "+ resTopic);
   check(res, {
     'Post status is 200': (r) => res.status === 200,
     'Post Content-Type header': (r) => res.headers['Content-Type'] === 'application/json',
