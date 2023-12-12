@@ -8,6 +8,18 @@ import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 let client = wavreader.createPulsarClient({url: `pulsar://${__ENV.PULSAR_ADDR}`});
 const audioFileLocation ="/Users/prasadchandrasekaran/Code/lasthope/voxflowLoadTest/wavReader/652-130726-combined.wav";
 
+
+export const options = {
+  discardResponseBodies: true,
+  scenarios: {
+    contacts: {
+      executor: 'per-vu-iterations',
+      vus: 1000,
+      iterations: 1,
+      maxDuration: '1m',
+    },
+  },
+};
 export default function(data) {
   // 3. VU code
   //let res = callControllerForTopic();
