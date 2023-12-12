@@ -1,1 +1,4 @@
 
+Switch on controller 
+To run  -> to go -> /home/prasad_tellestia/lasthope/load/wavReader
+PULSAR_ADDR=172.31.12.28:6650 ./k6 run --verbose voxflowTesting.js
