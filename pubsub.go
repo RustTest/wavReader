@@ -59,7 +59,7 @@ func (p *PubSub) CreatePulsarClient(clientConfig PulsarClientConfig) *pulsar.Cli
 			URL: clientConfig.URL,
 			//	ConnectionTimeout: 3 * time.Second,
 			Logger:                  plog.NewLoggerWithLogrus(logger),
-			MaxConnectionsPerBroker: 3,
+			MaxConnectionsPerBroker: 300,
 		})
 		pulsarClient = &pulsarC
 		if err != nil {
