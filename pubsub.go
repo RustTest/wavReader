@@ -328,6 +328,7 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		if end > len(int16buf) {
 			end = len(int16buf)
 		}
+		count++
 		audioData := NewAudioData(int16buf[i:end], 16)
 		audioChannel := NewAudioChannel(1, []AudioData{*audioData})
 		audioMessage := NewAudioMessage("load", count, []AudioChannel{*audioChannel})
@@ -359,7 +360,8 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	var close16buf []int16 = []int16{}
 	audioData := NewAudioData(close16buf, 16)
 	audioChannel := NewAudioChannel(1, []AudioData{*audioData})
-	audioMessage := NewAudioMessage("load", 846, []AudioChannel{*audioChannel})
+	count++
+	audioMessage := NewAudioMessage("load", count, []AudioChannel{*audioChannel})
 	endData, err := msgpack.Marshal(&audioMessage)
 	if nil != err {
 		log.Printf("error in serializing: %s", err.Error())
