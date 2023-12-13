@@ -345,7 +345,6 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		// 	seq_no:   uint32(count),
 		// 	channels: []AudioChannel{audioChannel},
 		// }
-		count++
 		data, err := msgpack.Marshal(&audioMessage)
 		if nil != err {
 			log.Printf("error in serializing: %s", err.Error())
