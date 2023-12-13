@@ -164,7 +164,7 @@ func (p *PubSub) Publish(
 		// need to get the elasped time in micro secon
 		currentStats.Duration = time.Since(iterationStartTime).Milliseconds()
 		currentStats.Bytes = (int64(len(mes[lop])))
-		currentStats.Messages++
+		currentStats.Messages = 1
 
 		//log.Printf("message %d", currentStats.Duration)
 		//log.Printf("sending byte arr of length in loop %d ", len(msg.Payload))
