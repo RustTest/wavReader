@@ -24,7 +24,7 @@
     "gnetId": 2587,
     "graphTooltip": 2,
     "id": 21,
-    "iteration": 1702534836770,
+    "iteration": 1702537637030,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -328,7 +328,7 @@
           "orientation": "auto",
           "reduceOptions": {
             "calcs": [
-              "lastNotNull"
+              "last"
             ],
             "fields": "",
             "values": false
@@ -406,7 +406,7 @@
         "id": 19,
         "panels": [],
         "repeat": "Measurement",
-        "title": "$Measurement",
+        "title": "VOXFLO INITIATION DURATION",
         "type": "row"
       },
       {
@@ -516,7 +516,7 @@
             "tags": []
           }
         ],
-        "title": "(mean)",
+        "title": "Mean",
         "type": "stat"
       },
       {
@@ -622,7 +622,7 @@
             "tags": []
           }
         ],
-        "title": "$Measurement (max)",
+        "title": "Max",
         "type": "stat"
       },
       {
@@ -728,7 +728,7 @@
             "tags": []
           }
         ],
-        "title": "$Measurement (med)",
+        "title": "Med",
         "type": "stat"
       },
       {
@@ -834,7 +834,7 @@
             "tags": []
           }
         ],
-        "title": "$Measurement (min)",
+        "title": "Min",
         "type": "stat"
       },
       {
@@ -940,7 +940,7 @@
             "tags": []
           }
         ],
-        "title": "$Measurement (p90)",
+        "title": "P-90",
         "type": "stat"
       },
       {
@@ -1046,7 +1046,7 @@
             "tags": []
           }
         ],
-        "title": "$Measurement (p95)",
+        "title": "P-95",
         "type": "stat"
       },
       {
@@ -1387,7 +1387,7 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 35
+          "y": 19
         },
         "id": 20,
         "panels": [],
@@ -1405,10 +1405,10 @@
           "current": {
             "selected": true,
             "text": [
-              "All"
+              "CONTROL_PLANE_DURATION"
             ],
             "value": [
-              "$__all"
+              "http_req_duration"
             ]
           },
           "hide": 0,
@@ -1417,12 +1417,12 @@
           "name": "Measurement",
           "options": [
             {
-              "selected": true,
+              "selected": false,
               "text": "All",
               "value": "$__all"
             },
             {
-              "selected": false,
+              "selected": true,
               "text": "CONTROL_PLANE_DURATION",
               "value": "http_req_duration"
             },
@@ -1465,7 +1465,7 @@
       ]
     },
     "time": {
-      "from": "now-15m",
+      "from": "now-5m",
       "to": "now"
     },
     "timepicker": {
@@ -1494,8 +1494,8 @@
       ]
     },
     "timezone": "browser",
-    "title": "k6 Load Testing Results",
+    "title": "Voxflo - Client Metrics",
     "uid": "a4HUiEDSk",
-    "version": 21,
+    "version": 34,
     "weekStart": ""
   }
