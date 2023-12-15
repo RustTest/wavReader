@@ -309,7 +309,7 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		log.Fatal("error in decoder")
 		return nil
 	}
-	segmentSamples := 5328
+	segmentSamples := 2880
 	// Calculate the number of samples for the desired duration
 	// Read audio data
 	buf, err := decoder.FullPCMBuffer()
