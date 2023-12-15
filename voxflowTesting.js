@@ -4,9 +4,36 @@ import wavreader from 'k6/x/wavreader';
 import http from 'k6/http';
 import { uuidv4 } from 'https://jslib.k6.io/k6-utils/1.4.0/index.js';
 
+
+export const options = {
+  scenarios: {
+   // contacts: {
+    //  executor: 'per-vu-iterations',
+    //  vus: 1000,
+    //  iterations: 1,    
+    //  maxDuration: '5m'
+   // },
+  //},
+	contacts: {
+      executor: 'ramping-vus',
+      startVUs: 0,
+      stages: [
+        { duration: '20s', target: 100 },
+	{ duration: '20s', target: 200 },      
+        { duration: '20s', target: 400 },
+	{ duration: '20s', target: 800 },
+        { duration: '20s', target: 1000 },
+      ],
+      gracefulRampDown: '0s',
+    },
+}
+}
+
 // console.log("runnign here");
 let client = wavreader.createPulsarClient({url: `pulsar://${__ENV.PULSAR_ADDR}`});
-const audioFileLocation ="/Users/prasadchandrasekaran/Code/lasthope/voxflowLoadTest/wavReader/652-130726-combined.wav";
+const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/652-130726-combined.wav";
+
+
 
 
 export const options = {
@@ -26,6 +53,10 @@ export default function(data) {
   //console.log(`starting the load for voxflo`);
   const topicgp = "non-persistent://public/default/"+uuidv4();
   let producer = wavreader.createProducer(client, {topic:topicgp})
+  let res = callControllerForTopic();
+  // console.log(`starting the load for voxflo`);
+  //const topicgp = "non-persistent://public/default/"+uuidv4();
+  let producer = wavreader.createProducer(client, {topic:res})
   let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
   check(err, {
   "is send": err => err == null
@@ -38,10 +69,13 @@ export function callControllerForTopic()  {
   const payload = JSON.stringify({
     stream_infra: "Pulsar"
   });
-  const headers = { 'Content-Type': 'application/json' };
-  const res = http.post('http://172.31.12.28:9001/flows', payload, { headers });
+  const headers = { 'Content-Type': 'application/json', 'responseType': 'text' };
+  const res = http.post('http://172.31.12.28:9001/flows', payload, { headers },{ responseType: "text" });
+//	console.log("log response"+res.status);
+//	console.log("logoing"+JSON.stringify(res));
 	const obj =JSON.parse(res.body);
 	//console.log(obj.flow_id);
+//	console.log(obj.flow_id);
         const resTopic = "non-persistent://public/default/"+obj.flow_id;
 	//console.log("toipc name is "+ resTopic);
   check(res, {
