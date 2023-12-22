@@ -18,11 +18,11 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 0,
       stages: [
-        { duration: '20s', target: 100 },
-	{ duration: '20s', target: 200 },      
-        { duration: '20s', target: 400 },
-	{ duration: '20s', target: 800 },
-        { duration: '20s', target: 1000 },
+        { duration: '20s', target: 1 },
+	{ duration: '20s', target: 1 },      
+        { duration: '20s', target: 1 },
+	{ duration: '20s', target: 1 },
+        { duration: '20s', target: 1 },
       ],
       gracefulRampDown: '0s',
     },
@@ -37,17 +37,17 @@ const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/0_georg
 
 
 
-export const options = {
-  discardResponseBodies: true,
-  scenarios: {
-    contacts: {
-      executor: 'per-vu-iterations',
-      vus: 1000,
-      iterations: 1,
-      maxDuration: '5m',
-    },
-  },
-};
+// export const options = {
+//   discardResponseBodies: true,
+//   scenarios: {
+//     contacts: {
+//       executor: 'per-vu-iterations',
+//       vus: 1000,
+//       iterations: 1,
+//       maxDuration: '5m',
+//     },
+//   },
+// };
 export default function(data) {
   // 3. VU code
   //let res = callControllerForTopic();
