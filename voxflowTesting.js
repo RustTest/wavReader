@@ -31,7 +31,8 @@ export const options = {
 
 // console.log("runnign here");
 let client = wavreader.createPulsarClient({url: `pulsar://${__ENV.PULSAR_ADDR}`});
-const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/652-130726-combined.wav";
+const audioFileLocation ="/home/prasad_tellestia/lasthope/load/wavReader/0_george_0.wav";
+
 
 
 
