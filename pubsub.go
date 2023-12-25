@@ -312,15 +312,15 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	segmentSamples := 960
 	// Calculate the number of samples for the desired duration
 	// Read audio data
-	decoder.
+
 	buf, err := decoder.FullPCMBuffer()
 	if err != nil {
 		log.Fatal("error in pcm buf")
 		return nil
 	}
 
-	decoder.
 
+	
 	var int16buf []int16
 	for _, value := range buf.Data {
 		int16buf = append(int16buf, int16(value))
