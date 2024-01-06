@@ -10,4 +10,6 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 xk6 build --with github.com/RustTest/wavReader@latest
 
 #run with 
+
+
 PULSAR_ADDR=172.31.12.28:6650 ./k6 run --verbose voxflowTesting.js
