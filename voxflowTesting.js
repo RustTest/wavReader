@@ -58,7 +58,7 @@ export default function(data) {
   // console.log(`starting the load for voxflo`);
   //const topicgp = "non-persistent://public/default/"+uuidv4();
   let producer = wavreader.createProducer(client, {topic:res})
-  let err = wavreader.publish(producer, null, {}, false, audioFileLocation,333);
+  let err = wavreader.publish(producer, null, {}, false, audioFileLocation,60);
   check(err, {
   "is send": err => err == null
    })

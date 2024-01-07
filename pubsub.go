@@ -174,9 +174,9 @@ func (p *PubSub) Publish(
 		if errStats := ReportPubishMetrics(ctx, currentStats); errStats != nil {
 			log.Fatal(errStats)
 		}
-		if time.Since(iterationStartTime).Milliseconds() < 300 {
+		if time.Since(iterationStartTime).Milliseconds() < (int64(durationMillisec)) {
 			time.Sleep(time.Millisecond *
-				time.Duration(300-time.Since(iterationStartTime).Milliseconds()))
+				time.Duration((int64(durationMillisec))-time.Since(iterationStartTime).Milliseconds()))
 		}
 
 		//log.Printf("no error delivered")
@@ -294,6 +294,7 @@ func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMes
 
 func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	// Open the input WAV file
+	const samples_per_ms = 16
 	log.Println("geting the wavReader")
 	file, err := os.Open(inputFilePath)
 	var audioMessageBytesArr [][]byte
@@ -309,7 +310,7 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		log.Fatal("error in decoder")
 		return nil
 	}
-	segmentSamples := 960
+	segmentSamples := samples_per_ms * durationMillisec
 	// Calculate the number of samples for the desired duration
 	// Read audio data
 
