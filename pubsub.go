@@ -2,9 +2,13 @@ package wavreader
 
 import (
 	"context"
+	"encoding/binary"
 	"errors"
+	"github.com/gorilla/websocket"
 	"log"
+	url2 "net/url"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/apache/pulsar-client-go/pulsar"
@@ -113,6 +117,11 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 		log.Fatalf("failed to create producer, error: %+v", err)
 	}
 	return producer
+}
+
+func (p *PubSub) PublishWebSocket(ctx context.Context, inputFilePath string,
+	durationMillisec int) {
+	webSocketVoxflo(inputFilePath, durationMillisec)
 }
 
 func (p *PubSub) Publish(
@@ -292,25 +301,18 @@ func NewAudioMessage(id string, seqNo uint32, channels []AudioChannel) *AudioMes
 	}
 }
 
-func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
-	// Open the input WAV file
+func openAudioFile(filePath string) []int16 {
+	file, err := os.Open(filePath)
 	const samples_per_ms = 16
-	log.Println("geting the wavReader")
-	file, err := os.Open(inputFilePath)
-	var audioMessageBytesArr [][]byte
 	if err != nil {
 		log.Fatal("error opening file")
 		return nil
 	}
-	defer file.Close()
-
-	// Decode the WAV file
 	decoder := wav.NewDecoder(file)
 	if decoder == nil {
 		log.Fatal("error in decoder")
 		return nil
 	}
-	segmentSamples := samples_per_ms * durationMillisec
 	// Calculate the number of samples for the desired duration
 	// Read audio data
 
@@ -320,12 +322,96 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		return nil
 	}
 
-
-	
 	var int16buf []int16
 	for _, value := range buf.Data {
 		int16buf = append(int16buf, int16(value))
 	}
+	return int16buf
+}
+
+//func int16ArrayToByteArray(intArray []int16) ([]byte, error) {
+//	byteArray := make([]byte, len(intArray)*2) // 2 bytes per int16
+//
+//	for i, val := range intArray {
+//		binary.LittleEndian.PutUint16(byteArray[i*2:], uint16(val))
+//	}
+//
+//	return byteArray, nil
+//}
+
+//func webSocketVoxflo(filePath string, durationMillisec int) {
+//
+//	url := url2.URL{Scheme: "ws", Host: "127.0.0.1:5555", Path: "", RawQuery: "connectId=1234"}
+//	conn, resp, err := websocket.DefaultDialer.Dial(url.String(), nil)
+//	int16buf := openAudioFile(filePath)
+//	if err != nil {
+//		log.Printf("error connecting")
+//		log.Fatal("details", err)
+//	} else {
+//		log.Printf("resposne from {}", resp.Status)
+//	}
+//	defer conn.Close()
+//	done := make(chan struct{})
+//
+//	go func() {
+//		defer close(done)
+//		for {
+//			_, message, err := conn.ReadMessage()
+//			if err != nil {
+//				log.Printf("read", err)
+//				return
+//			}
+//			log.Printf("message is {}", message)
+//		}
+//	}()
+//	const samples_per_ms = 16
+//	segmentSamples := samples_per_ms * durationMillisec
+//	ticker := time.NewTicker(time.Millisecond * 60)
+//	defer ticker.Stop()
+//	interrupt := make(chan os.Signal, 1)
+//	signal.Notify(interrupt, os.Interrupt)
+//
+//	for {
+//		count := 0
+//		end := segmentSamples
+//		select {
+//		case <-done:
+//			return
+//		case t := <-ticker.C:
+//			if count <= len(int16buf) {
+//				res, _ := int16ArrayToByteArray(int16buf[count:end])
+//
+//				var err = conn.WriteMessage(websocket.BinaryMessage, res)
+//				count++
+//				log.Printf("sending message in {}", t.String())
+//				if err != nil {
+//					log.Printf("error is {}", err)
+//					return
+//				}
+//			} else {
+//				log.Printf("finished messaging, count value is {}", count)
+//				return
+//			}
+//		case <-interrupt:
+//			var myEmptyArrByte []byte
+//			var err = conn.WriteMessage(websocket.BinaryMessage, myEmptyArrByte)
+//			if err != nil {
+//				log.Printf("error is {}", err)
+//				return
+//			}
+//
+//		}
+//	}
+//
+//}
+
+func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
+	// Open the input WAV file
+	const samples_per_ms = 16
+	var audioMessageBytesArr [][]byte
+	log.Println("geting the wavReader")
+	segmentSamples := samples_per_ms * durationMillisec
+	var int16buf = openAudioFile(inputFilePath)
 	var count uint32 = 0
 	for i := 0; i < len(int16buf); i += segmentSamples {
 		end := i + segmentSamples
@@ -336,30 +422,13 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 		audioData := NewAudioData(int16buf[i:end], 16)
 		audioChannel := NewAudioChannel(1, []AudioData{*audioData})
 		audioMessage := NewAudioMessage("load", count, []AudioChannel{*audioChannel})
-		// AudioData{
-		// 	pcm_bytes:   int16buf[i:end],
-		// 	sample_rate: 16,
-		// }
-		// audioChannel := AudioChannel{
-		// 	channel_id: 1,
-		// 	data:       []AudioData{audioData},
-		// }
-		// audioMessage := AudioMessage{
-		// 	id:       "1",
-		// 	seq_no:   uint32(count),
-		// 	channels: []AudioChannel{audioChannel},
-		// }
 		data, err := msgpack.Marshal(&audioMessage)
 		if nil != err {
 			log.Printf("error in serializing: %s", err.Error())
 			return nil
 		}
-		//log.Printf("size of bytes are with the new encoder%d", len(data))
 		audioMessageBytesArr = append(audioMessageBytesArr, data)
 	}
-	//log.Fatal("length isaudioMessageArr %d", len(audioMessageArr))
-	// add one element array of bytes to the end of the array
-	// add one element array of bytes to the end of the array
 	var close16buf []int16 = []int16{}
 	audioData := NewAudioData(close16buf, 16)
 	audioChannel := NewAudioChannel(1, []AudioData{*audioData})
@@ -372,4 +441,108 @@ func wavReaderVoxflo(inputFilePath string, durationMillisec int) [][]byte {
 	}
 	audioMessageBytesArr = append(audioMessageBytesArr, endData)
 	return audioMessageBytesArr
+}
+
+func openAudioFileForBytes(filePath string) []int16 {
+	file, err := os.Open(filePath)
+	const samples_per_ms = 16
+	if err != nil {
+		log.Fatal("error opening file")
+		return nil
+	}
+	decoder := wav.NewDecoder(file)
+	if decoder == nil {
+		log.Fatal("error in decoder")
+		return nil
+	}
+	// Calculate the number of samples for the desired duration
+	// Read audio data
+
+	buf, err := decoder.FullPCMBuffer()
+	if err != nil {
+		log.Fatal("error in pcm buf")
+		return nil
+	}
+
+	var int16buf []int16
+	for _, value := range buf.Data {
+		int16buf = append(int16buf, int16(value))
+	}
+	return int16buf
+}
+
+func int16ArrayToByteArray(intArray []int16) ([]byte, error) {
+	byteArray := make([]byte, len(intArray)*2) // 2 bytes per int16
+
+	for i, val := range intArray {
+		binary.LittleEndian.PutUint16(byteArray[i*2:], uint16(val))
+	}
+
+	return byteArray, nil
+}
+
+func webSocketVoxflo(filePath string, durationMillisec int) {
+
+	url := url2.URL{Scheme: "ws", Host: "127.0.0.1:5555", Path: "", RawQuery: "connectId=f2440fee-b49f-4820-a050-0508833b87a5"}
+	conn, resp, err := websocket.DefaultDialer.Dial(url.String(), nil)
+	int16buf := openAudioFile(filePath)
+	if err != nil {
+		log.Printf("error connecting")
+		log.Fatal("details", err)
+	} else {
+		log.Printf("resposne from {}", resp.Status)
+	}
+	defer conn.Close()
+	done := make(chan struct{})
+
+	go func() {
+		defer close(done)
+		for {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Printf("read", err)
+				return
+			}
+			log.Printf("message is {}", string(message))
+		}
+	}()
+	const samples_per_ms = 16
+	segmentSamples := samples_per_ms * durationMillisec
+	ticker := time.NewTicker(time.Millisecond * 60)
+	defer ticker.Stop()
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+
+	for {
+		count := 0
+		end := segmentSamples
+		select {
+		case <-done:
+			return
+		case t := <-ticker.C:
+			if count <= len(int16buf) {
+				res, _ := int16ArrayToByteArray(int16buf[count:end])
+
+				var err = conn.WriteMessage(websocket.BinaryMessage, res)
+				count++
+				log.Printf("sending message in {}", t.String())
+				if err != nil {
+					log.Printf("error is {}", err)
+					return
+				}
+			} else {
+				log.Printf("finished messaging, count value is {}", count)
+				return
+			}
+		case <-interrupt:
+			var myEmptyArrByte []byte
+			var err = conn.WriteMessage(websocket.BinaryMessage, myEmptyArrByte)
+			if err != nil {
+				log.Printf("error is {}", err)
+				return
+			}
+
+		}
+	}
+
 }

@@ -57,13 +57,26 @@ export default function(data) {
   let res = callControllerForTopic();
   // console.log(`starting the load for voxflo`);
   //const topicgp = "non-persistent://public/default/"+uuidv4();
-  let producer = wavreader.createProducer(client, {topic:res})
-  let err = wavreader.publish(producer, null, {}, false, audioFileLocation,60);
+ // let producer = wavreader.createProducer(client, {topic:res})
+ // let err = wavreader.publish(producer, null, {}, false, audioFileLocation,60);
+
+    wavreader.webSocketVoxflo(audioFileLocation,60);
+
   check(err, {
   "is send": err => err == null
    })
-
 }
+
+
+// export function callWebSocketFlo() {
+//     const payload = JSON.stringify({
+//         stream_infra: "Pulsar"
+//     });
+//     const headers = { 'Content-Type': 'application/json', 'responseType': 'text' };
+//     const res = http.post('http://localhost:9001/flows', payload, { headers },{ responseType: "text" });
+//     const obj =JSON.parse(res.body);
+//     const resTopic = obj.topic_id;
+// }
 
 
 export function callControllerForTopic()  {
