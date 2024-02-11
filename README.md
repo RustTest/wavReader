@@ -20,6 +20,8 @@ xk6 build --with github.com/RustTest/wavReader@latest
 
 
 try 
+
+
 go clean -cache
 
 
