@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	url2 "net/url"
@@ -481,9 +482,9 @@ func int16ArrayToByteArray(intArray []int16) ([]byte, error) {
 	return byteArray, nil
 }
 
-func webSocketVoxflo(filePath string, durationMillisec int) {
+func webSocketVoxflo(filePath string, durationMillisec int, connectionId string) {
 
-	url := url2.URL{Scheme: "ws", Host: "127.0.0.1:5555", Path: "", RawQuery: "connectId=f2440fee-b49f-4820-a050-0508833b87a5"}
+	url := url2.URL{Scheme: "ws", Host: "127.0.0.1:5555", Path: "", RawQuery: fmt.Sprintf("connectId=%s", connectionId)}
 	conn, resp, err := websocket.DefaultDialer.Dial(url.String(), nil)
 	int16buf := openAudioFile(filePath)
 	if err != nil {
