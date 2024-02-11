@@ -129,7 +129,13 @@ func (p *PubSub) PublishWebSocket(
         inputFilePath string,
         durationMillisec int,
 ) error  {
+	    state := lib.GetState(ctx)
+        if state == nil {
+                return errNilState
+        }
+        var err error
 	webSocketVoxflo(inputFilePath, durationMillisec, connectionId)
+	return  err
 }
 
 func (p *PubSub) Publish(
