@@ -60,7 +60,7 @@ export default function(data) {
  // let producer = wavreader.createProducer(client, {topic:res})
  // let err = wavreader.publish(producer, null, {}, false, audioFileLocation,60);
 
-    wavreader.webSocketVoxflo(audioFileLocation,60);
+    wavreader.PublishWebSocket(audioFileLocation,60,res );
 
   check(err, {
   "is send": err => err == null

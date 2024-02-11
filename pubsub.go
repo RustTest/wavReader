@@ -121,8 +121,8 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 }
 
 func (p *PubSub) PublishWebSocket(ctx context.Context, inputFilePath string,
-	durationMillisec int) {
-	webSocketVoxflo(inputFilePath, durationMillisec)
+	durationMillisec int, connectionId string) {
+	webSocketVoxflo(inputFilePath, durationMillisec, connectionId)
 }
 
 func (p *PubSub) Publish(
