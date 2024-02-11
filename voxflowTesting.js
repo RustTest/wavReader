@@ -61,7 +61,7 @@ export default function(data) {
 //	let producer = wavreader.createProducer(client, {topic:res})
 //  let err = wavreader.publish(producer, null, {}, false, audioFileLocation,60);
 
-  wavreader.PublishWebSocket(audioFileLocation,60,res);
+  wavreader.Publish(res,null,{},false,audioFileLocation,60);
 
   check(err, {
   "is send": err => err == null
@@ -93,8 +93,8 @@ export function callControllerForTopic()  {
 	//console.log(obj.flow_id);
 //	console.log(obj.flow_id);
 //"non-persistent://public/default/"+
-        const resTopic = obj.topic_id;
-	console.log("toipc name is "+ resTopic);
+        const resTopic = obj.flow_id;
+//	console.log("toipc name is "+ resTopic);
   check(res, {
     'Post status is 200': (r) => res.status === 200,
     'Post Content-Type header': (r) => res.headers['Content-Type'] === 'application/json',

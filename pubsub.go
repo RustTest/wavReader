@@ -120,7 +120,7 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 	return producer
 }
 
-func (p *PubSub) PublishWebSocket(
+func (p *PubSub) Publish(
         ctx context.Context,
         connectionId string,
         body []byte,
@@ -138,7 +138,7 @@ func (p *PubSub) PublishWebSocket(
 	return  err
 }
 
-func (p *PubSub) Publish(
+func (p *PubSub) PublishStreamPulsar(
 	ctx context.Context,
 	producer pulsar.Producer,
 	body []byte,
