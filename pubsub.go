@@ -120,8 +120,15 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 	return producer
 }
 
-func (p *PubSub) PublishWebSocket(ctx context.Context, inputFilePath string,
-	durationMillisec int, connectionId string) {
+func (p *PubSub) PublishWebSocket(
+        ctx context.Context,
+        connectionId string,
+        body []byte,
+        properties map[string]string,
+        async bool,
+        inputFilePath string,
+        durationMillisec int,
+) error  {
 	webSocketVoxflo(inputFilePath, durationMillisec, connectionId)
 }
 
