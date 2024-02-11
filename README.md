@@ -13,3 +13,9 @@ xk6 build --with github.com/RustTest/wavReader@latest
 
 
 PULSAR_ADDR=172.31.12.28:6650 ./k6 run --verbose voxflowTesting.js
+
+If issues building the xk6 build --with github.com/RustTest/wavReader@latest 
+try 
+go clean -cache
+go clean -modcache
+
