@@ -48,6 +48,10 @@ type ProducerConfig struct {
 
 var pulsarClient *pulsar.Client
 
+func (p *PubSub) TestClient(connectionId string) {
+	log.Printf("topic name in create producer %s",connectionId)
+}
+
 func (p *PubSub) CreatePulsarClient(clientConfig PulsarClientConfig) *pulsar.Client {
 
 	if pulsarClient == nil {
