@@ -53,6 +53,26 @@ type ProducerConfig struct {
 
 var pulsarClient *pulsar.Client
 
+
+
+func (p *PubSub) Publish(
+        ctx context.Context,
+        connectionId string,
+        body []byte,
+        properties map[string]string,
+        async bool,
+        inputFilePath string,
+        durationMillisec int,
+) error  {
+            state := lib.GetState(ctx)
+        if state == nil {
+                return errNilState
+        }
+        var err error
+        webSocketVoxflo(inputFilePath, durationMillisec, connectionId)
+        return  err
+}
+
 func (p *PubSub) CreatePulsarClient(clientConfig PulsarClientConfig) *pulsar.Client {
 
 	if pulsarClient == nil {
@@ -120,23 +140,6 @@ func (p *PubSub) CreateProducer(client pulsar.Client, config ProducerConfig) pul
 	return producer
 }
 
-func (p *PubSub) Publish(
-        ctx context.Context,
-        connectionId string,
-        body []byte,
-        properties map[string]string,
-        async bool,
-        inputFilePath string,
-        durationMillisec int,
-) error  {
-	    state := lib.GetState(ctx)
-        if state == nil {
-                return errNilState
-        }
-        var err error
-	webSocketVoxflo(inputFilePath, durationMillisec, connectionId)
-	return  err
-}
 
 func (p *PubSub) PublishStreamPulsar(
 	ctx context.Context,

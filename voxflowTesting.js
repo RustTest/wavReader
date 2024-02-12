@@ -52,8 +52,8 @@ export default function(data) {
   // 3. VU code
   //let res = callControllerForTopic();
   //console.log(`starting the load for voxflo`);
-  //const topicgp = "non-persistent://public/default/"+uuidv4();
-  //let producer = wavreader.createProducer(client, {topic:topicgp})
+  const topicgp = "non-persistent://public/default/"+uuidv4();
+  let producer = wavreader.createProducer(client, {topic:topicgp})
   let res = callControllerForTopic();
   // console.log(`starting the load for voxflo`);
   //const topicgp = "non-persistent://public/default/"+uuidv4();
